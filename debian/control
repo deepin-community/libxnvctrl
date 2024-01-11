@@ -1,15 +1,42 @@
-Source: template-repository
-Section: unknown
+Source: libxnvctrl
+Section: libs
 Priority: optional
-Maintainer: Tsic404 <liuheng@deepin.org>
-Build-Depends: debhelper (>= 11)
-Standards-Version: 4.1.3
-Homepage: https://github.com/deepin-community/template-repository
-#Vcs-Browser: https://salsa.debian.org/debian/deepin-community-template-repository
-#Vcs-Git: https://salsa.debian.org/debian/deepin-community-template-repository.git
+Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
+Uploaders:
+ Andreas Beckmann <anbe@debian.org>,
+Build-Depends:
+ debhelper-compat (= 13),
+ libxext-dev,
+Rules-Requires-Root: no
+Standards-Version: 4.6.2
+Homepage: https://download.nvidia.com/XFree86/nvidia-settings/
+Vcs-Browser: https://salsa.debian.org/nvidia-team/nvidia-settings
+Vcs-Git: https://salsa.debian.org/nvidia-team/nvidia-settings.git -b libxnvctrl/main
 
-Package: template-repository
+Package: libxnvctrl0
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends:
+ ${shlibs:Depends}, ${misc:Depends}
+Description: NV-CONTROL X extension (runtime library)
+ The NV-CONTROL X extension provides a mechanism for X clients to
+ query and set configuration parameters of the NVIDIA X driver.
+ State set by the NV-CONTROL X extension is assumed to be persistent
+ only for the current server generation.
+ .
+ This package contains the shared library.
+
+Package: libxnvctrl-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends:
+ libxnvctrl0 (= ${binary:Version}),
+ libx11-dev,
+ ${misc:Depends}
+Description: NV-CONTROL X extension (development files)
+ The NV-CONTROL X extension provides a mechanism for X clients to
+ query and set configuration parameters of the NVIDIA X driver.
+ State set by the NV-CONTROL X extension is assumed to be persistent
+ only for the current server generation.
