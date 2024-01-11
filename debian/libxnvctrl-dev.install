@@ -1,0 +1,4 @@
+src/libXNVCtrl/NVCtrl.h /usr/include/NVCtrl/
+src/libXNVCtrl/NVCtrlLib.h /usr/include/NVCtrl/
+src/libXNVCtrl/_out/debian/libXNVCtrl.a /usr/lib/${DEB_HOST_MULTIARCH}/
+src/libXNVCtrl/_out/debian/libXNVCtrl.so /usr/lib/${DEB_HOST_MULTIARCH}/

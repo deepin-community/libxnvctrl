@@ -1,0 +1,82 @@
+
+This is a (very) brief summary of some of things that need to be
+done to write a Frame Lock NV-CONTROL client.
+
+Please see samples/nv-control-framelock.c for a basic Frame Lock client.  See
+the file ctkframelock.c for a much more involved example of how the
+nvidia-settings utility programs the Frame Lock attributes.
+
+The constants referenced below are defined in NVCtrl.h.  Please see the
+comments in that file for an explanation of each attribute.  It may
+also be instructive to grep ctkframelock.c to see how each attribute
+is used.
+
+Querying frame lock capabilities of a system:
+
+    - Query the number of Quadro Sync devices on the system by passing
+      NV_CTRL_TARGET_TYPE_FRAMELOCK to XNVCTRLQueryTargetCount()
+
+    - Query the GPUs attached to each Quadro Sync device by querying the
+      NV_CTRL_BINARY_DATA_GPUS_USING_FRAMELOCK attribute for each Quadro
+      Sync device.
+
+    - Query the enabled (available) display devices on each GPU through
+      the NV_CTRL_BINARY_DATA_DISPLAYS_CONNECTED_TO_GPU and
+      NV_CTRL_DISPLAY_ENABLED attributes.
+
+    - Query whether each display may be configured as Frame Lock server or
+      client through the NV_CTRL_FRAMELOCK_DISPLAY_CONFIG attribute.
+
+Configuring the Frame Lock group (This must be done while Frame Lock Sync is
+disabled on the GPU/Quadro Sync Device):
+
+    - Set one display device as Frame Lock server through the
+      NV_CTRL_FRAMELOCK_DISPLAY_CONFIG_SERVER attribute.
+
+    - Set the rest of the display devices as Frame Lock clients through the
+      NV_CTRL_FRAMELOCK_DISPLAY_CONFIG_CLIENT attribute.
+
+    - Set NV_CTRL_USE_HOUSE_SYNC to NV_CTRL_USE_HOUSE_SYNC_TRUE or
+      NV_CTRL_USE_HOUSE_SYNC_FALSE on the server Quadro Sync device (this is
+      the Quadro Sync device that is attached to the GPU that contains the
+      display device currently set as the Frame Lock server.)  Depending on
+      whether or not you will be using a House Sync signal.
+
+    - Set NV_CTRL_FRAMELOCK_POLARITY for each client Quadro Sync device in the
+      cluster; most likely you want NV_CTRL_FRAMELOCK_POLARITY_RISING_EDGE.
+
+    - Set NV_CTRL_FRAMELOCK_SYNC_DELAY as appropriate for each Quadro Sync
+      device. Most likely you want 0.
+
+    - Set NV_CTRL_FRAMELOCK_SYNC_INTERVAL as appropriate if you
+      are using house sync.  Most likely, you just want 0.
+
+Enabling/Disabling Frame Lock:
+
+    - Enable Frame Lock on each GPU by setting NV_CTRL_FRAMELOCK_SYNC
+      to NV_CTRL_FRAMELOCK_SYNC_ENABLE.
+
+    - (optional) set NV_CTRL_FRAMELOCK_TEST_SIGNAL to
+      NV_CTRL_FRAMELOCK_TEST_SIGNAL_ENABLE followed immediately by
+      NV_CTRL_FRAMELOCK_TEST_SIGNAL_DISABLE (on the GPU that contains the
+      server Frame Lock display device.)  This guarantees accuracy of the
+      Universal Frame Count (as returned by glXQueryFrameCountNV()).
+
+    - When you are done, set NV_CTRL_FRAMELOCK_SYNC to
+      NV_CTRL_FRAMELOCK_SYNC_DISABLE on each GPU to disable Frame Lock.
+
+During operation, you can also query any of these on each GPU or Frame Lock
+device:
+
+    NV_CTRL_FRAMELOCK_PORT0_STATUS
+    NV_CTRL_FRAMELOCK_PORT1_STATUS
+    NV_CTRL_FRAMELOCK_HOUSE_STATUS
+    NV_CTRL_FRAMELOCK_SYNC_READY
+    NV_CTRL_FRAMELOCK_STEREO_SYNC
+    NV_CTRL_FRAMELOCK_ETHERNET_DETECTED
+    NV_CTRL_FRAMELOCK_SYNC_RATE
+    NV_CTRL_FRAMELOCK_TIMING
+
+(nvidia-settings registers a gtk+ timeout function and queries the
+state of these on each X screen every few seconds).
+

@@ -1,0 +1,3 @@
+version=4
+
+https://download.nvidia.com/XFree86/nvidia-settings/nvidia-settings-(.*).tar.(?:gz|bz2)

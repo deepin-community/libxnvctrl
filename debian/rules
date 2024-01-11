@@ -1,4 +1,30 @@
 #!/usr/bin/make -f
 
+#export DH_VERBOSE=1
+export NV_VERBOSE=1
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+include /usr/share/dpkg/buildflags.mk
+DPKG_EXPORT_BUILDTOOLS=1
+include /usr/share/dpkg/buildtools.mk
+
+# reproducible builds: instead of _out/$(uname)_($uname -m) use a fixed directory
+export OUTPUTDIR	 = _out/debian
+
+ifneq (,$(filter noopt,$(DEB_BUILD_OPTIONS)))
+export DEBUG		 = 1
+endif
+
+
 %:
 	dh $@
+
+override_dh_auto_build:
+	CC_ONLY_CFLAGS="$(CPPFLAGS)" dh_auto_build --sourcedirectory=src/libXNVCtrl
+
+override_dh_auto_install:
+
+override_dh_auto_clean:
+	$(RM) -r src/libXNVCtrl/_out
